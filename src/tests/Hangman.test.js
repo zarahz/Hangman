@@ -1,7 +1,8 @@
 import React from "react";
-import { shallow, mount } from "enzyme";
+import { shallow } from "enzyme";
 import App from "../components/App";
 import HiddenLetter from "../components/HiddenLetter";
+import faker from 'faker';
 
 describe("First React component test with Enzyme", () => {
   it("renders without crashing", () => {
@@ -63,4 +64,16 @@ it("game lost", () => {
     expect(wrap.find("button").text()).toEqual("Play");
   });
 
+  it("setting hangman word", () => {
+      faker.seed(123);
+      const wrap = shallow(<App />);
+      const instance = wrap.instance();
+      expect(wrap.state('hangmanWord')).toBe(null);
+      // words without whitespaces
+      const randomWord = faker.random.word().replace(/\s/g, "")
+      const allWords = [randomWord]
+      wrap.setState({ started: true, allWords: allWords})
+      instance.chooseRandomWord();
+      expect(wrap.state('hangmanWord')).toBe(randomWord.toUpperCase());
+  })
   
