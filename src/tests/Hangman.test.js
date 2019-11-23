@@ -2,7 +2,7 @@ import React from "react";
 import { shallow } from "enzyme";
 import App from "../components/App";
 import HiddenLetter from "../components/HiddenLetter";
-import faker from 'faker';
+import faker from "faker";
 
 describe("First React component test with Enzyme", () => {
   it("renders without crashing", () => {
@@ -51,29 +51,56 @@ it("game not started click button", () => {
 });
 
 it("game lost", () => {
-    const wrap = shallow(<App />);
-    wrap.setState({ guessesLeft: 0 });
-    
-    expect(wrap.find("button").text()).toEqual("Play");
-  });
+  const wrap = shallow(<App />);
+  wrap.setState({ guessesLeft: 0 });
 
-  it("game won", () => {
-    const wrap = shallow(<App />);
-    wrap.setState({ gameWon: true });
-  
-    expect(wrap.find("button").text()).toEqual("Play");
-  });
+  expect(wrap.find("button").text()).toEqual("Play");
+});
 
-  it("setting hangman word", () => {
-      faker.seed(123);
-      const wrap = shallow(<App />);
-      const instance = wrap.instance();
-      expect(wrap.state('hangmanWord')).toBe(null);
-      // words without whitespaces
-      const randomWord = faker.random.word().replace(/\s/g, "")
-      const allWords = [randomWord]
-      wrap.setState({ started: true, allWords: allWords})
-      instance.chooseRandomWord();
-      expect(wrap.state('hangmanWord')).toBe(randomWord.toUpperCase());
-  })
-  
+it("game won", () => {
+  const wrap = shallow(<App />);
+  wrap.setState({ gameWon: true });
+
+  expect(wrap.find("button").text()).toEqual("Play");
+});
+
+it("setting hangman word", () => {
+  faker.seed(123);
+  const wrap = shallow(<App />);
+  const instance = wrap.instance();
+  expect(wrap.state("hangmanWord")).toBe(null);
+  // words without whitespaces
+  const randomWord = faker.random.word().replace(/\s/g, "");
+  const allWords = [randomWord];
+  wrap.setState({ started: true, allWords: allWords });
+  instance.chooseRandomWord();
+  expect(wrap.state("hangmanWord")).toBe(randomWord.toUpperCase());
+});
+
+// UI Tests on Your Hangman App (used diagram of "Task 3 2.pdf")
+it("game over screen", () => {
+  const wrap = shallow(<App />);
+  wrap.setState({ guessesLeft: 0 });
+
+  expect(
+    wrap.findWhere(tag => tag.type() === "h1" && tag.contains("Game Over!"))
+  );
+});
+
+it("winning screen", () => {
+  const wrap = shallow(<App />);
+  wrap.setState({ gameWon: true });
+
+  expect(
+    wrap.findWhere(tag => tag.type() === "h1" && tag.contains("You Won!"))
+  );
+});
+
+it("last try", () => {
+  const wrap = shallow(<App />);
+  wrap.setState({ guessesLeft: 1 });
+
+  expect(
+    wrap.findWhere(tag => tag.type() === "span" && tag.contains("Guesses Left: 1"))
+  );
+});
